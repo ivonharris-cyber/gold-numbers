@@ -17,6 +17,7 @@
 
 import { analyzeFrequency, normalizeDraws, validateDraw, type FrequencyReport, type PositionStats } from './frequency.js';
 import { isZodiacSign, luckyDigitsFor, signForDate, type ZodiacSign } from './zodiac.js';
+import { birthDigits } from './birthdate.js';
 
 export interface Draw {
   date: string;        // ISO yyyy-mm-dd
@@ -61,21 +62,25 @@ function hashString(s: string): number {
 
 const NUM_SETS = 10;
 
-/** Signal weights; must sum to 1. */
+/** Signal weights; sum to 1. Birth digits (when present) carve W_BIRTH
+ *  proportionally out of the base three so the blend stays normalised. */
 const W_HOT = 0.45;
 const W_FAVOURED = 0.30;
 const W_ZODIAC = 0.25;
+const W_BIRTH = 0.20;
 
 interface DigitPool {
   weights: number[]; // weights[d] = blended desirability of digit d
 }
 
-function blendPool(pos: PositionStats, favoured: number[], zodiac: number[]): DigitPool {
+function blendPool(pos: PositionStats, favoured: number[], zodiac: number[], birthDigs: number[] = []): DigitPool {
   const weights = new Array<number>(10).fill(0);
   const max = Math.max(1, ...pos.counts);
-  for (let d = 0; d < 10; d++) weights[d] += W_HOT * (pos.counts[d] / max);
-  for (const d of favoured) weights[d] += W_FAVOURED;
-  for (const d of zodiac) weights[d] += W_ZODIAC;
+  const scale = birthDigs.length > 0 ? 1 - W_BIRTH : 1;
+  for (let d = 0; d < 10; d++) weights[d] += scale * W_HOT * (pos.counts[d] / max);
+  for (const d of favoured) weights[d] += scale * W_FAVOURED;
+  for (const d of zodiac) weights[d] += scale * W_ZODIAC;
+  for (const d of birthDigs) weights[d] += W_BIRTH;
   return { weights };
 }
 
@@ -144,9 +149,12 @@ export function generateSets(
     (favoured ?? []).filter((d) => Number.isInteger(d) && d >= 0 && d <= 9),
   )].sort((a, b) => a - b);
   const zodiacDigits = new Set(luckyDigitsFor(sign as ZodiacSign));
+  let birthDigs: number[] = [];
   if (birthInfo) {
     const [, m, d] = birthInfo.date.split('-').map(Number);
     for (const digit of luckyDigitsFor(signForDate(m, d))) zodiacDigits.add(digit);
+    // Thai numerology: birth-day, life-path, time and weekday digits join the blend.
+    birthDigs = birthDigits(birthInfo.date, birthInfo.time).all;
   }
   const zodiac = [...zodiacDigits].sort((a, b) => a - b);
   const freq: FrequencyReport = analyzeFrequency(flat);
@@ -156,9 +164,9 @@ export function generateSets(
   );
   const rng = mulberry32(seed);
 
-  const sixPools = freq.firstPrize.map((p) => blendPool(p, favouredClean, zodiac));
-  const threePools = freq.threeDigit.map((p) => blendPool(p, favouredClean, zodiac));
-  const twoPools = freq.twoDigit.map((p) => blendPool(p, favouredClean, zodiac));
+  const sixPools = freq.firstPrize.map((p) => blendPool(p, favouredClean, zodiac, birthDigs));
+  const threePools = freq.threeDigit.map((p) => blendPool(p, favouredClean, zodiac, birthDigs));
+  const twoPools = freq.twoDigit.map((p) => blendPool(p, favouredClean, zodiac, birthDigs));
 
   const sets: NumberSet[] = [];
   const seen = new Set<string>();
