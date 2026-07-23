@@ -4,3 +4,7 @@ dist-tests/
 build/
 cli/
 .git-gh/
+dist/
+dist-tests/
+engine/
+ui/
