@@ -15,10 +15,9 @@ export interface OracleReading {
 }
 
 const STREETS = [
-  'Sukhumvit Road', 'Silom Road', 'Yaowarat Road', 'Khao San Road',
-  'Ratchadamnoen Avenue', 'Charoen Krung Road', 'Phaya Thai Road',
-  'Asoke Montri Road', 'Phetchaburi Road', 'Rama IV Road',
-  'Sathorn Road', 'Victory Monument',
+  'Ratchadamnoen Avenue', 'Yaowarat Road', 'Silom Road', 'Sukhumvit Road',
+  'Khao San Road', 'Charoen Krung Road', 'Phahonyothin Road',
+  'Victory Monument', 'Banglamphu', 'Siam Square',
 ];
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];

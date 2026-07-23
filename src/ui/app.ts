@@ -69,12 +69,34 @@ function renderHotCold(draws: Draw[]): void {
   hotcoldEl.hidden = false;
 }
 
+const STREET_TH: Record<string, string> = {
+  'Sukhumvit Road': 'ถนนสุขุมวิท',
+  'Silom Road': 'ถนนสีลม',
+  'Yaowarat Road': 'ถนนเยาวราช',
+  'Khao San Road': 'ถนนข้าวสาร',
+  'Ratchadamnoen Avenue': 'ถนนราชดำเนิน',
+  'Charoen Krung Road': 'ถนนเจริญกรุง',
+  'Phaya Thai Road': 'ถนนพญาไท',
+  'Asoke Montri Road': 'ถนนอโศกมนตรี',
+  'Phetchaburi Road': 'ถนนเพชรบุรี',
+  'Rama IV Road': 'ถนนพระรามที่ 4',
+  'Sathorn Road': 'ถนนสาทร',
+  'Victory Monument': 'อนุสาวรีย์ชัยสมรภูมิ',
+};
+
+const DAY_TH: Record<string, string> = {
+  Monday: 'วันจันทร์', Tuesday: 'วันอังคาร', Wednesday: 'วันพุธ',
+  Thursday: 'วันพฤหัสบดี', Friday: 'วันศุกร์', Saturday: 'วันเสาร์', Sunday: 'วันอาทิตย์',
+};
+
 function renderOracle(birth: BirthInfo): void {
   const o = ticketOracle(birth);
+  const street = STREET_TH[o.street] ?? o.street;
+  const day = DAY_TH[o.day] ?? o.day;
   oracleText.innerHTML =
-    `The stars say: buy your ticket on <strong>${o.street}</strong>, Bangkok, ` +
-    `this <strong>${o.day}</strong> between <strong>${o.time}</strong>. ` +
-    `Wear something gold. 🌟`;
+    `ฤกษ์มงคลบอกว่า: ไปซื้อสลากที่ <strong>${street}</strong> กรุงเทพฯ ` +
+    `<strong>${day}</strong>นี้ ช่วงเวลา <strong>${o.time}</strong> น. ` +
+    `อย่าลืมใส่เสื้อสีทองไปด้วยนะ 🌟`;
   oracleEl.hidden = false;
 }
 
@@ -92,13 +114,13 @@ function renderSets(sets: ReturnType<typeof generateSets>): void {
     const nums = document.createElement('div');
     nums.className = 'set-nums';
     nums.innerHTML =
-      `<span><span class="set-label">6-digit</span><span class="six">${s.sixDigit}</span></span>` +
-      `<span><span class="set-label">3-digit</span><span class="three">${s.threeDigit.join(' · ')}</span></span>` +
-      `<span><span class="set-label">2-digit</span><span class="two">${s.twoDigit}</span></span>`;
+      `<span><span class="set-label">เลข 6 หลัก</span><span class="six">${s.sixDigit}</span></span>` +
+      `<span><span class="set-label">เลข 3 ตัว</span><span class="three">${s.threeDigit.join(' · ')}</span></span>` +
+      `<span><span class="set-label">เลข 2 ตัว</span><span class="two">${s.twoDigit}</span></span>`;
 
     const score = document.createElement('div');
     score.className = 'set-score';
-    score.textContent = `gold ${Math.round(s.score * 100)}%`;
+    score.textContent = `มงคล ${Math.round(s.score * 100)}%`;
 
     card.append(rank, nums, score);
     resultsEl.appendChild(card);
@@ -121,7 +143,7 @@ btn.addEventListener('click', async () => {
       oracleEl.hidden = true;
     }
   } catch (err) {
-    resultsEl.innerHTML = `<p class="disclaimer">Could not load draw data — check data/draws.json exists.</p>`;
+    resultsEl.innerHTML = `<p class="disclaimer">โหลดข้อมูลผลสลากไม่ได้ — กรุณาตรวจสอบไฟล์ data/draws.json</p>`;
     console.error(err);
   } finally {
     btn.disabled = false;
