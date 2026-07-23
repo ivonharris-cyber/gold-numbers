@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { generateSets, hotColdDigits } from '../src/engine/generator.js';
 import { ticketOracle } from '../src/engine/oracle.js';
+import { birthDigits } from '../src/engine/birthdate.js';
 import type { Draw } from '../src/engine/generator.js';
 import { ZODIAC_SIGNS } from '../src/engine/zodiac.js';
 
@@ -92,4 +93,35 @@ test('ticketOracle is deterministic with valid shapes', () => {
   assert.match(a.day, /^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)$/);
   assert.match(a.time, /^\d{2}:\d{2}-\d{2}:\d{2}$/);
   assert.throws(() => ticketOracle({ date: 'nope', time: '07:00' }));
+});
+
+test('birthDigits — Thai numerology signals are in range and deterministic', () => {
+  const b = birthDigits('1990-08-05', '07:30');
+  assert.deepEqual(b, birthDigits('1990-08-05', '07:30'));
+  for (const d of [b.birthDayDigit, b.lifePath, b.timeDigit, b.weekDayDigit]) {
+    assert.ok(Number.isInteger(d) && d >= 0 && d <= 9, `digit ${d}`);
+  }
+  // 1990-08-05 was a Sunday -> Thai weekday digit 7
+  assert.equal(b.weekDayDigit, 7);
+  // day 5 -> 5; date digit sum 1+9+9+0+0+8+0+5=32 -> 5; 07+30=37 -> 10 -> 1
+  assert.equal(b.birthDayDigit, 5);
+  assert.equal(b.lifePath, 5);
+  assert.equal(b.timeDigit, 1);
+  // all is deduped + sorted
+  assert.deepEqual(b.all, [...new Set(b.all)].sort((x, y) => x - y));
+  assert.throws(() => birthDigits('1990/08/05', '07:30'));
+  assert.throws(() => birthDigits('1990-08-05', '25:30'));
+});
+
+test('birth digits weight the blend — birth info shifts generated sets deterministically', () => {
+  const birth = { date: '1985-12-25', time: '11:11' };
+  const withBirth = generateSets('capricorn', [6], raw, birth);
+  const without = generateSets('capricorn', [6], raw);
+  assert.equal(withBirth.length, 10);
+  assert.notDeepEqual(
+    withBirth.map((s) => s.sixDigit),
+    without.map((s) => s.sixDigit),
+  );
+  // backward compat: omitting birth keeps the legacy 3-arg call working
+  assert.equal(generateSets('capricorn', [6], raw).length, 10);
 });
