@@ -6,10 +6,11 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json && cp index.html styles.css dist/ && cp -r data dist/data",
     "typecheck": "tsc --noEmit",
-    "test": "node --test dist-tests/tests/",
+    "test": "tsc -p tsconfig.tests.json && node --test dist-tests/tests/",
     "serve": "python3 -m http.server 8080"
   },
   "devDependencies": {
+    "@types/node": "^22.20.1",
     "typescript": "^5.5.0"
   }
 }

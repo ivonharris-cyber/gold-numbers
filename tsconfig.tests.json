@@ -8,7 +8,8 @@
     "rootDir": ".",
     "sourceMap": false,
     "declaration": false,
-    "types": []
+    "types": ["node"],
+    "skipLibCheck": true
   },
-  "include": ["src/engine.ts", "src/types.ts", "tests/engine.test.ts", "tests/node-shims.d.ts"]
+  "include": ["src/engine/**/*.ts", "tests/**/*.ts"]
 }
