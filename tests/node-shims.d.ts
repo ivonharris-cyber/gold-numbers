@@ -33,3 +33,5 @@ declare module 'node:path' {
   export function dirname(p: string): string;
   export function join(...parts: string[]): string;
 }
+
+declare const process: { cwd(): string };

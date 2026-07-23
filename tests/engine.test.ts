@@ -22,7 +22,10 @@ const tiny: DrawsFile = {
     { date: '2026-07-16', first: '111111', first3: ['000', '111'], last3: ['111', '000'], last2: '11' },
   ],
 };
-// tiny digit totals: 0 -> 14, 1 -> 16, everything else 0 (30 digits total)
+// tiny digit totals (recount):
+//   draw 1: 0s = 6 (first) + 3 (first3[0]) + 3 (last3[1]) + 2 (last2) = 14; 1s = 3 + 3 = 6
+//   draw 2: 0s = 3 + 3 = 6;                                 1s = 6 + 3 + 3 + 2 = 14
+//   totals: 0 -> 20, 1 -> 20, everything else 0 (40 digits total)
 
 /* ---------- analyse() ---------- */
 
@@ -44,19 +47,23 @@ test('analyse: hot[0] has the max count, cold[0] the min count', () => {
   const stats = analyse(data);
   assert.equal(stats.counts[stats.hot[0]], Math.max(...stats.counts));
   assert.equal(stats.counts[stats.cold[0]], Math.min(...stats.counts));
-  // hot desc => cold asc is the exact reverse ranking
-  assert.deepEqual(stats.cold, [...stats.hot].reverse());
+  // hot is descending frequency; the ranking is self-consistent
+  for (let i = 1; i < 10; i++) {
+    assert.ok(stats.counts[stats.hot[i - 1]] >= stats.counts[stats.hot[i]]);
+    assert.ok(stats.counts[stats.cold[i - 1]] <= stats.counts[stats.cold[i]]);
+  }
 });
 
 test('analyse: hot/cold on tiny synthetic fixture', () => {
   const stats = analyse(tiny);
-  assert.equal(stats.counts[0], 14);
-  assert.equal(stats.counts[1], 16);
-  assert.equal(stats.counts.reduce((a, b) => a + b, 0), 30);
-  assert.equal(stats.hot[0], 1); // most frequent
-  assert.equal(stats.hot[1], 0);
-  assert.equal(stats.cold[0], 2); // tie at 0 occurrences -> lowest digit first
-  assert.equal(stats.cold[9], 1); // least frequent last = most frequent
+  assert.equal(stats.counts[0], 20);
+  assert.equal(stats.counts[1], 20);
+  assert.equal(stats.counts.reduce((a, b) => a + b, 0), 40);
+  // 0 and 1 tie at 20 -> tie-break by digit value puts 0 first
+  assert.deepEqual(stats.hot.slice(0, 2), [0, 1]);
+  // cold: the eight zero-count digits first (tie -> ascending), then the tied pair
+  assert.deepEqual(stats.cold.slice(0, 8), [2, 3, 4, 5, 6, 7, 8, 9]);
+  assert.deepEqual(stats.cold.slice(8), [0, 1]);
 });
 
 test('analyse: tie-break is by digit value', () => {
@@ -68,9 +75,10 @@ test('analyse: tie-break is by digit value', () => {
     ],
   };
   const stats = analyse(tied);
-  // digits 0,1,3,5,7,9 all appear 4 times; 2,4,6,8 appear 0 times
-  assert.deepEqual(stats.hot.slice(0, 6), [0, 1, 3, 5, 7, 9]);
-  assert.deepEqual(stats.cold.slice(0, 4), [2, 4, 6, 8]);
+  // 7 and 9 appear 4 times (hottest, tie -> 7 first);
+  // 0,1,3,5 appear 3 times; 2,4,6,8 appear 0 (coldest)
+  assert.deepEqual(stats.hot, [7, 9, 0, 1, 3, 5, 2, 4, 6, 8]);
+  assert.deepEqual(stats.cold, [2, 4, 6, 8, 0, 1, 3, 5, 7, 9]);
 });
 
 /* ---------- generateGoldSets() ---------- */
