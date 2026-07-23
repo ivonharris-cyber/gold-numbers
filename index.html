@@ -33,7 +33,23 @@
     <label for="favoured">Favoured digits (optional, e.g. 3,7,9)</label>
     <input id="favoured" type="text" inputmode="numeric" placeholder="3,7,9" maxlength="12">
 
+    <div class="birth-row">
+      <div>
+        <label for="birthdate">Birthdate</label>
+        <input id="birthdate" type="date">
+      </div>
+      <div>
+        <label for="birthtime">Time of birth</label>
+        <input id="birthtime" type="time">
+      </div>
+    </div>
+
     <button id="generate">✨ Generate 10 Gold Sets</button>
+  </section>
+
+  <section id="oracle" class="oracle" hidden>
+    <h2>🎫 Ticket Oracle</h2>
+    <p id="oracle-text"></p>
   </section>
 
   <section id="hotcold" class="hotcold" hidden>

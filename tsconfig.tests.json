@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist-tests",
+    "rootDir": ".",
+    "sourceMap": false,
+    "declaration": false,
+    "types": []
+  },
+  "include": ["src/engine.ts", "src/types.ts", "tests/engine.test.ts", "tests/node-shims.d.ts"]
+}

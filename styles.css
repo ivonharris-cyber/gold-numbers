@@ -70,6 +70,19 @@ button {
 button:hover { box-shadow: 0 0 18px rgba(212, 175, 55, 0.45); transform: translateY(-1px); }
 button:active { transform: translateY(0); }
 
+.birth-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.birth-row > div { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.oracle {
+  margin-top: 1.5rem;
+  background: linear-gradient(120deg, #2b1f0e, #241a0b);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  padding: 1.2rem 1.4rem;
+}
+.oracle h2 { font-size: 1.1rem; color: var(--gold-bright); margin-bottom: 0.5rem; }
+.oracle p { line-height: 1.6; }
+
 .hotcold { margin-top: 1.5rem; }
 .hotcold h2 { font-size: 1.1rem; color: var(--gold); margin-bottom: 0.6rem; }
 .digit-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
