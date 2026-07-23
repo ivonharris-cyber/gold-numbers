@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gold Numbers — Thai Lottery Lucky Picks</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>🏆 Gold Numbers</h1>
+  <p class="tagline">Thai Government Lottery lucky picks — stats, stars &amp; favoured digits</p>
+</header>
+
+<main>
+  <section class="controls">
+    <label for="sign">Your star sign</label>
+    <select id="sign">
+      <option value="aries">♈ Aries</option>
+      <option value="taurus">♉ Taurus</option>
+      <option value="gemini">♊ Gemini</option>
+      <option value="cancer">♋ Cancer</option>
+      <option value="leo">♌ Leo</option>
+      <option value="virgo">♍ Virgo</option>
+      <option value="libra">♎ Libra</option>
+      <option value="scorpio">♏ Scorpio</option>
+      <option value="sagittarius">♐ Sagittarius</option>
+      <option value="capricorn">♑ Capricorn</option>
+      <option value="aquarius">♒ Aquarius</option>
+      <option value="pisces">♓ Pisces</option>
+    </select>
+
+    <label for="favoured">Favoured digits (optional, e.g. 3,7,9)</label>
+    <input id="favoured" type="text" inputmode="numeric" placeholder="3,7,9" maxlength="12">
+
+    <button id="generate">✨ Generate 10 Gold Sets</button>
+  </section>
+
+  <section id="hotcold" class="hotcold" hidden>
+    <h2>Recent draw pulse</h2>
+    <div id="hotcold-body"></div>
+  </section>
+
+  <section id="results" class="results" aria-live="polite"></section>
+
+  <footer class="disclaimer">
+    <strong>For entertainment only.</strong> Lottery draws are random — no method can predict winning numbers.
+    Play responsibly; never spend more than you can afford to lose.
+  </footer>
+</main>
+
+<script type="module" src="src/ui/app.js"></script>
+</body>
+</html>

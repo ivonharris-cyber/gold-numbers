@@ -1,0 +1,15 @@
+{
+  "name": "thai-lottery-gold",
+  "version": "0.1.0",
+  "description": "Thai Government Lottery lucky-number generator — entertainment only",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && cp index.html styles.css dist/ && cp -r data dist/data",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test dist-tests/tests/",
+    "serve": "python3 -m http.server 8080"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}
